@@ -11,6 +11,7 @@
   "PYTHONPATH": "", 
   "supported-extensions": [
     ".py", 
+	".pyc",
     ".html", 
     ".jpg", 
     ".png", 
