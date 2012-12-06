@@ -1,0 +1,26 @@
+{
+  "mainFile": "C:/Users/BlackDusk/Documents/GitHub/tabulation/source/Tabulation.py", 
+  "venv": "", 
+  "relatedProjects": [], 
+  "name": "Tabulation", 
+  "license": "GNU General Public License v3", 
+  "url": "", 
+  "pythonPath": "C:/Python32/python.exe", 
+  "preExecScript": "", 
+  "programParams": "", 
+  "PYTHONPATH": "", 
+  "supported-extensions": [
+    ".py", 
+    ".html", 
+    ".jpg", 
+    ".png", 
+    ".ui", 
+    ".css", 
+    ".json", 
+    ".js", 
+    ".ini"
+  ], 
+  "project-type": "", 
+  "postExecScript": "", 
+  "description": "Diplomarbeit Tabulation\n=================\n\n\\m/_"
+}
