@@ -1,5 +1,5 @@
 {
-  "mainFile": "C:/Users/BlackDusk/Documents/GitHub/tabulation/__init__.py", 
+  "mainFile": "C:/Users/BlackDusk/Documents/GitHub/tabulation/source/Tabulation.py", 
   "venv": "", 
   "relatedProjects": [], 
   "name": "Tabulation", 
@@ -11,7 +11,6 @@
   "PYTHONPATH": "", 
   "supported-extensions": [
     ".py", 
-	".pyc",
     ".html", 
     ".jpg", 
     ".png", 
