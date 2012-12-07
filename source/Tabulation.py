@@ -10,6 +10,16 @@ from numpy import floor, int16, fromstring, vstack, savetxt, fft
 exiting = False
 
 
+def analysis(floatdata):
+    #bet = abs(fft.fft(floatdata))[:CHUNK/2]
+    #return bet
+    #maxi = max(bet)
+    #for i, x in enumerate(bet):
+        #if x > (maxi / 10):
+            #print(i, i * RATE / CHUNK, " " * int(100 * x / maxi), "#")
+    return("analysis complete")
+
+
 class Window(QWidget):
 
     def __init__(self, parent=None):
@@ -104,13 +114,17 @@ class Worker(QThread):
         self.test()
         #print(exiting)
         while not exiting:
-            #print(".")
             data = stream.read(CHUNK)
             frames.append(data)
             floatdata = fromstring(data, int16)[0::2] / (2. ** (16 - 1))
+            bet = abs(fft.fft(floatdata))[:CHUNK/2]
+            maxi = max(bet)
+            for i, x in enumerate(bet):
+                if x > (maxi / 10):
+                    test()
+                    print(i, i * RATE / CHUNK, " " * int(100 * x / maxi), "#")
+            #print(analysis(floatdata))
             fft_array = fft.fft(floatdata)
-            #print(data)
-            #print(floatdata)
 
         #ext_file = open("Output.txt", "w")
         #text_file.write(floatdata)
@@ -132,14 +146,12 @@ class Worker(QThread):
 
         #a = get_device_count()
         #print(a)
-        #print(floatdata)
         #numpyarray into string damit in txt file
         #import pdb; pdb.set_trace() #Python Debugger
         #dir (data)
         #print(pa.get_device_info_by_index(device))
         #str(data)
         #floatdata = frombytes(data, int16)
-        #print(floatdata)
 
         stream.stop_stream()
         stream.close()
