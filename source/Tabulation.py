@@ -11,13 +11,13 @@ exiting = False
 
 
 def analysis(floatdata):
+    #print("in a")
     #bet = abs(fft.fft(floatdata))[:CHUNK/2]
-    #return bet
     #maxi = max(bet)
     #for i, x in enumerate(bet):
         #if x > (maxi / 10):
-            #print(i, i * RATE / CHUNK, " " * int(100 * x / maxi), "#")
-    return("analysis complete")
+            #return(i, i * RATE / CHUNK, " " * int(100 * x / maxi), "#")
+    return("lol")
 
 
 class Window(QWidget):
@@ -121,7 +121,6 @@ class Worker(QThread):
             maxi = max(bet)
             for i, x in enumerate(bet):
                 if x > (maxi / 10):
-                    test()
                     print(i, i * RATE / CHUNK, " " * int(100 * x / maxi), "#")
             #print(analysis(floatdata))
             fft_array = fft.fft(floatdata)
