@@ -92,6 +92,7 @@ class Worker(QThread):
         WAVE_OUTPUT_FILENAME = "aufnahme122.wav"
         #channel = self.get_current_first_channel()
         #nchannels = self.get_current_device_nchannels()
+        #hallo
         p = pyaudio.PyAudio()
 
         stream = p.open(format=FORMAT,
