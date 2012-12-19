@@ -82,8 +82,11 @@ class Worker(QThread):
     # def get_current_device_nchannels(self):
         # return self.pa.get_device_info_by_index(self.device)['maxInputChannels']
 
+
     def runStart(self):
         self.start()
+
+   
 
     def run(self):
         print("Starte Run")
@@ -112,22 +115,33 @@ class Worker(QThread):
             floatdata = fromstring(data, int16)[0::2] / (2. ** (16 - 1))
             fft_array = fft.fft(floatdata)
             #b = abs(fft_array)
-            b = [abs(x) for x in fft_array][:4098]  #betrag, erste Haelfte
+            b = [abs(x) for x in fft_array][:4098]  #berag, erste Haelfte
             m = max(b)
+            frequenzTabelle = [65.4064, 69.2957, 73.4162, 77.7817, 82.4069, 87.3071, 92.4986, 97.9989, 103.826, 110.000, 116.541, 123.471, 130.813, 138.591, 146.832, 155.563, 164.814, 174.614, 184.997, 195.998, 207.652, 220.000, 233.082, 246.942, 261.626, 277.183, 293.665, 311.127, 329.628, 349.228, 369.994, 391.995, 415.305, 440.000, 466.164, 493.883, 523.251, 554.365, 587.330, 622.254, 659.255, 698.456, 739.989, 783.991, 830.609, 880.000, 932.328, 987.767, 1046.50, 1108.73, 1174.66, 1244.51, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760.00, 1864.66, 1957.53, 2093.00, 2217.46, 2349.32, 2489.02, 2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520.00, 3729.31, 3951.07, 4186.01]
             for i, x in enumerate(b):
                 if x > m / 30:  # umso hoeher mehr werte
                     #print(i, i*RATE/CHUNK, " "* int(100*x/m), "#")
                     if m == x:
                         mi = i
                         #print ("max: ", m , " bei ", mi , " ",  mi*RATE/CHUNK, " Hz")
+                        #Nach dem Errechnen eine Methode die das Ganze mit einer Liste abgleicht mit Toleranz
                         KEYNOTE = mi * RATE / CHUNK
+                        
                         #methode mit unscharfer abgleichung fuer notenerkennung
                         print("Der Grundton betraegt: ", KEYNOTE, " Hz")
+                        #findeTon(KEYNOTE)
+
+                        
+
+                        #frequenzTabelle.count(frequenz)
+                        print("Frequenz kommt vor ", frequenzTabelle.count(KEYNOTE))
+                        #print int(round(8359980, -2))
+                        print (round(KEYNOTE, -2))
                 #zeros(c)
             #print(data)
             #print(floatdata)
 
-        #text_file = open("Output.txt", "w")
+        #text_file = open("Output.txt", "w")0
         #text_file.write(floatdata)
         #text_file.close()
         #savetxt('output.txt', floatdata, delimiter=',')
