@@ -108,6 +108,28 @@ class Worker(QThread):
         frames = []
         self.test()
         #print(exiting)
+
+        Frequenztabelle = [65.4064, 69.2957, 73.4162, 77.7817, 82.4069, 87.3071, 92.4986, 97.9989,
+                           103.826, 110.000, 116.541, 123.471, 130.813, 138.591, 146.832, 155.563,
+                           164.814, 174.614, 184.997, 195.998, 207.652, 220.000, 233.082, 246.942,
+                           261.626, 277.183, 293.665, 311.127, 329.628, 349.228, 369.994, 391.995,
+                           415.305, 440.000, 466.164, 493.883, 523.251, 554.365, 587.330, 622.254,
+                           659.255, 698.456, 739.989, 783.991, 830.609, 880.000, 932.328, 987.767,
+                           1046.50, 1108.73, 1174.66, 1244.51, 1318.51, 1396.91, 1479.98, 1567.98,
+                           1661.22, 1760.00, 1864.66, 1957.53, 2093.00, 2217.46, 2349.32, 2489.02,
+                           2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520.00, 3729.31, 3951.07,
+                           4186.01]
+        Notentabelle = ['X', 'X', 'X', 'X', 'E0', 'E1', 'E2', 'E3',
+                        'E4', 'E5A0', 'E6A1', 'E7A2', 'E8A3', 'E9A4', 'E10A5D0', 'E11A6D1',
+                        'E12A7D2', 'A8D3', 'A9D4', 'A10D5G0', 'A11D6G1', 'A12D7G2', 'D8G3', 'D9G4H0',
+                        'D10G5H1', 'D11G6H2', 'D12G7H3', 'G8H4', 'G9H5e0', 'G10H6e1', 'G11H7e2', 'G12H8e3',
+                        'H9e4','H10e5','H11e6','H12e7','e8','e9','e10','e11',
+                        'e12', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
+                         'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
+                         'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
+                         'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
+                         'X'
+                        ]
         while not exiting:
             #print(".")
             data = stream.read(CHUNK)
@@ -117,24 +139,6 @@ class Worker(QThread):
             #b = abs(fft_array)
             b = [abs(x) for x in fft_array][:4098]  #betrag, erste Haelfte
             m = max(b)
-
-
-            Frequenztabelle = [65.4064, 69.2957, 73.4162, 77.7817, 82.4069, 87.3071, 92.4986, 97.9989,
-                               103.826, 110.000, 116.541, 123.471, 130.813, 138.591, 146.832, 155.563,
-                               164.814, 174.614, 184.997, 195.998, 207.652, 220.000, 233.082, 246.942,
-                               261.626, 277.183, 293.665, 311.127, 329.628, 349.228, 369.994, 391.995,
-                               415.305, 440.000, 466.164, 493.883, 523.251, 554.365, 587.330, 622.254,
-                               659.255, 698.456, 739.989, 783.991, 830.609, 880.000, 932.328, 987.767,
-                               1046.50, 1108.73, 1174.66, 1244.51, 1318.51, 1396.91, 1479.98, 1567.98,
-                               1661.22, 1760.00, 1864.66, 1957.53, 2093.00, 2217.46, 2349.32, 2489.02,
-                               2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520.00, 3729.31, 3951.07,
-                               4186.01]
-            Notentabelle = ['X', 'X', 'X', 'X', 'E0', 'E1', 'E2', 'E3',
-                            'E4', 'E5A0', 'E6A1', 'E7A2', 'E8A3', 'E9A4', 'E10A5D0', 'E11A6D1',
-                            'E12A7D2', 'A8D3', 'A9D4', 'A10D5G0', 'A11D6G1', 'A12D7G2', 'D8G3', 'D9G4H0',
-                            'D10G5H1', 'D11G6H2', 'D12G7H3', 'G8H4', 'G9H5e0', 'G10H6e1', 'G11H7e2', 'G12H8e3',
-                            'H9e4','H10e5','H11e6','H12e7','e8','e9','e10','e11',
-                            'e12']
 
             for i, x in enumerate(b):
                 if x > m / 30:  # umso hoeher mehr werte
@@ -146,31 +150,33 @@ class Worker(QThread):
                         KEYNOTE = mi * RATE / CHUNK
                         #methode mit unscharfer abgleichung fuer notenerkennung
                         #print("Der Grundton betraegt: ", KEYNOTE, " Hz")
-
-
                         #frequentabelle mit  KEYNOTE durchgehen, ersten größeren wert nehmen
                         #index dieses wertes finden, und des wertes darunter
                         #verhältnis ausrechnen, den wert nehmen welchen verhältnis besser ist
                         # tadaa, richtige note, mithilfe des index auf notentabelle(derindex) zugreifen
                         #Profit!
 
-                        for j in Frequenztabelle:
-                            if j > KEYNOTE:
-                                y = Frequenztabelle.index(j)
-                                #print("Der erste grossere Wert betraegt: ",j,"und der Wert darunter ist: ",Frequenztabelle[y-1])
+            for j in Frequenztabelle:
+                if j > KEYNOTE:
+                    #print(j)
+                    y = Frequenztabelle.index(j)
+                    #print("keynote: ",KEYNOTE,"Der erste grossere Wert betraegt: ",j,"und der Wert darunter ist: ",Frequenztabelle[y-1])
 
-                                verhaltnisklein = KEYNOTE/Frequenztabelle[y-1]
-                                verhaltnisgross = j/KEYNOTE
+                    verhaltnisklein = KEYNOTE/Frequenztabelle[y-1]
+                    verhaltnisgross = j/KEYNOTE
 
-                                if verhaltnisklein < verhaltnisgross:
-                                    print("Der Grundton ist: ",KEYNOTE,"und der Ton ist: ",Frequenztabelle[y-1])
-                                    print(Notentabelle[y-1])
-                                    #print("mimi: ",(y-1))
-                                else:
-                                    print("Der Grundton ist: ",KEYNOTE,"Der Ton ist: ",j)
-                                    print(Notentabelle[y])
-                                    #print("mimi: ",y)
-                                break
+                    #print("verhaltnisklein: ",verhaltnisklein," verhaltnisgros: ",verhaltnisgross)
+
+                    if verhaltnisklein < verhaltnisgross:
+                        print("Der Grundton ist: ",KEYNOTE,"und der Ton ist: ",Frequenztabelle[y-1])
+                        print(Notentabelle[y-1])
+                        #print("mimi: ",(y-1))
+                    else:
+                        print("Der Grundton ist: ",KEYNOTE,"Der Ton ist: ",j)
+                        print(Notentabelle[y])
+                        #print("mimi: ",y)
+                    break
+            #print("dan")
 
 
                         #findeTon(KEYNOTE)
