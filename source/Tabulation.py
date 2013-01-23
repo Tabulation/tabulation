@@ -131,7 +131,7 @@ class Worker(QThread):
                          #'X'
                         #]
 
-        Frequliste =     [(65.4064, "X"), (69.2957, "X"), (73.4162, "X"), (77.7817, "X")
+        Frequliste =     [(0, "emergency"),(65.4064, "X"), (69.2957, "X"), (73.4162, "X"), (77.7817, "X")
                         , (82.4069, "E0"), (87.3071, "E1"), (92.4986, "E2"), (97.9989, "E3")
                         , (103.826, "E4"), (110.000, "E5A0"), (116.541, "E6A1"), (123.471, "E7A2")
                         , (130.813, "E8A3"), (138.591, "E9A4"), (146.832, "E10A5D0"), (155.563, "E11A6D1")
@@ -148,7 +148,7 @@ class Worker(QThread):
                         , (1661.22, "X"), (1760.00, "X"), (1864.66, "X"), (1957.53, "X")
                         , (2093.00, "X"), (2217.46, "X"), (2349.32, "X"), (2489.02, "X")
                         , (2637.02, "X"), (2793.83, "X"), (2959.96, "X"), (3135.96, "X")
-                        , (3322.44, "X"), (3520.00, "X"), (3729.31, "X"), (3951.07, "X"), (4186.01, "X")
+                        , (3322.44, "X"), (3520.00, "X"), (3729.31, "X"), (3951.07, "X"), (4186.01, "X"),(1000000,"emergency")
                         ]
 
 
@@ -161,7 +161,7 @@ class Worker(QThread):
             #nur weitermachen wenn ueber bestimmten dB bereich
             #print(max(floatdata))
             #noch testen wie es in action reagiert
-            if max(floatdata) > 0:
+            if max(floatdata) > 0.1:
 
                 fft_array = fft.fft(floatdata)
                 #b = abs(fft_array)
@@ -187,14 +187,14 @@ class Worker(QThread):
                 #print (KEYNOTE)
 
                 nied = [ (f,n)  for f,n in Frequliste if f > KEYNOTE][0]
-                #print("nied",nied)
                 hoch = [ (f,n)  for f,n in Frequliste if f < KEYNOTE][-1]
+                #print("KN:",KEYNOTE)
+                #print("nied",nied)
                 #print("hoch",hoch)
                 verhaltnisklein = KEYNOTE/nied[0]
                 verhaltnisgross = hoch[0]/KEYNOTE
                 #print(verhaltnisklein)
                 #print(verhaltnisgross)
-
                 if verhaltnisklein < verhaltnisgross:
                     print("Der Grundton ist: ",KEYNOTE,"Der Ton ist: ",hoch[0]," das entspricht den Noten: ",hoch[1])
                 else:
