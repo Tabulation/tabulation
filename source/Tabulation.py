@@ -165,7 +165,7 @@ class Worker(QThread):
 
                 fft_array = fft.fft(floatdata)
                 #b = abs(fft_array)
-                b = [abs(x) for x in fft_array][:4098]  #betrag, erste Haelfte
+                b = [abs(x) for x in fft_array][:4098]  # betrag, erste Haelfte
                 m = max(b)
 
                 for i, x in enumerate(b):
