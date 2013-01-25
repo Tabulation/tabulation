@@ -21,12 +21,14 @@ class Window(QWidget):
         label = QLabel(self.tr("Starten sie Ihre Aufnahme"))
         self.startButton = QPushButton(self.tr("&Start"))
         self.stopButton = QPushButton(self.tr("&Stop"))
+        self.neuGButton = QPushButton(self.tr("&Neuer Griff"))
         self.viewer = QLabel()
         self.viewer.setFixedSize(300, 300)
         self.connect(self.thread, SIGNAL("finished()"), self.updateUi)
         self.connect(self.thread, SIGNAL("terminated()"), self.updateUi)
         self.connect(self.thread, SIGNAL("output(QRect, QImage)"), self.addImage)
         self.connect(self.startButton, SIGNAL("clicked()"), self.startRecording)
+        self.connect(self.neuGButton, SIGNAL("clicked()"), self.addRiff)
         self.connect(self.stopButton, SIGNAL("clicked()"), self.__del__)
 
         layout = QGridLayout()
@@ -34,6 +36,7 @@ class Window(QWidget):
         #layout.addWidget(self.spinBox, 0, 1)
         layout.addWidget(self.startButton, 0, 2)
         layout.addWidget(self.stopButton, 3, 4)
+        layout.addWidget(self.neuGButton, 0, 1)
         layout.addWidget(self.viewer, 1, 0, 1, 3)
         self.setLayout(layout)
 
@@ -42,6 +45,10 @@ class Window(QWidget):
     def startRecording(self):
         self.startButton.setEnabled(False)
         self.thread.runStart()
+
+    def addRiff(self):
+        #self.neuGButton.setEnabled(False)
+        self.thread.addRiff()
 
     def addImage(self, rect, image):
         pixmap = self.viewer.pixmap()
@@ -60,7 +67,7 @@ class Window(QWidget):
 
 class Worker(QThread):
 
-    def test(self):
+    def startcheck(self):
         if exiting == True:
             global exiting
             exiting = False
@@ -86,6 +93,57 @@ class Worker(QThread):
     def runStart(self):
         self.start()
 
+    def runRiff():
+        addRiff.start()
+
+    def addRiff(self):
+        CHUNK = 1024 * 8
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 2
+        RATE = 44100
+        RECORD_SECONDS = 10
+        p = pyaudio.PyAudio()
+
+        stream = p.open(format=FORMAT,
+                        channels=CHANNELS,
+                        rate=RATE,
+                        input=True,
+                        frames_per_buffer=CHUNK)
+        frames = []
+        neugriffarray = []
+        self.startcheck()
+        print("Starte Aufnahme")
+        for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+            data = stream.read(CHUNK)
+            frames.append(data)
+            floatdata = fromstring(data, int16)[0::2] / (2. ** (16 - 1))
+            if max(floatdata) > 0.1:
+                fft_array = fft.fft(floatdata)
+                b = [abs(x) for x in fft_array][:4098]  # betrag, erste Haelfte
+                m = max(b)
+                for i, x in enumerate(b):
+                    if x > m / 30:  # umso hoeher mehr werte
+                        if m == x:
+                            mi = i
+                            KEYNOTE = mi * RATE / CHUNK
+                print (KEYNOTE)
+                #Fenster das die aktuell gespielten Frequenzen darstellt
+                neugriffarray.append(KEYNOTE)
+        neugriff = sum(neugriffarray)/len(neugriffarray)
+        print("Aufnahme beendet")
+        #name = raw_input("Geben sie den namen für ihren neuen Griff ein: ")
+        #Fenster aufgehung die nach Namen für den neuen Griff fragt
+        #print("Ihr neuer Griff heißt :",name," und hat eine Frequenz von: ",neugriff)
+        print("Frequenz ihres neuen Griffs: ",neugriff)
+        #speicherung des neuen Griffs in die Frequenzliste
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+
+
+
+
 
 
     def run(self):
@@ -106,30 +164,9 @@ class Worker(QThread):
                         input=True,
                         frames_per_buffer=CHUNK)
         frames = []
-        self.test()
+        self.startcheck()
         #print(exiting)
 
-        #Frequenztabelle = [65.4064, 69.2957, 73.4162, 77.7817, 82.4069, 87.3071, 92.4986, 97.9989,
-                           #103.826, 110.000, 116.541, 123.471, 130.813, 138.591, 146.832, 155.563,
-                           #164.814, 174.614, 184.997, 195.998, 207.652, 220.000, 233.082, 246.942,
-                           #261.626, 277.183, 293.665, 311.127, 329.628, 349.228, 369.994, 391.995,
-                           #415.305, 440.000, 466.164, 493.883, 523.251, 554.365, 587.330, 622.254,
-                           #659.255, 698.456, 739.989, 783.991, 830.609, 880.000, 932.328, 987.767,
-                           #1046.50, 1108.73, 1174.66, 1244.51, 1318.51, 1396.91, 1479.98, 1567.98,
-                           #1661.22, 1760.00, 1864.66, 1957.53, 2093.00, 2217.46, 2349.32, 2489.02,
-                           #2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520.00, 3729.31, 3951.07,
-                           #4186.01]
-        #Notentabelle = ['X', 'X', 'X', 'X', 'E0', 'E1', 'E2', 'E3',
-                        #'E4', 'E5A0', 'E6A1', 'E7A2', 'E8A3', 'E9A4', 'E10A5D0', 'E11A6D1',
-                        #'E12A7D2', 'A8D3', 'A9D4', 'A10D5G0', 'A11D6G1', 'A12D7G2', 'D8G3', 'D9G4H0',
-                        #'D10G5H1', 'D11G6H2', 'D12G7H3', 'G8H4', 'G9H5e0', 'G10H6e1', 'G11H7e2', 'G12H8e3',
-                        #'H9e4','H10e5','H11e6','H12e7','e8','e9','e10','e11',
-                        #'e12', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
-                         #'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
-                         #'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
-                         #'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
-                         #'X'
-                        #]
 
         Frequliste =     [(0, "emergency"),(65.4064, "X"), (69.2957, "X"), (73.4162, "X"), (77.7817, "X")
                         , (82.4069, "E0"), (87.3071, "E1"), (92.4986, "E2"), (97.9989, "E3")
