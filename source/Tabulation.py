@@ -14,14 +14,17 @@ from numpy import * #floor, int16, fromstring, vstack, savetxt, fft
 
 
 exiting = False
+TESTV = "hey"
 class Window(QWidget):
     def __init__(self, parent = None):
+        global TESTV
         QWidget.__init__(self, parent)
         self.thread = Worker()
         label = QLabel(self.tr("Starten sie Ihre Aufnahme"))
         self.startButton = QPushButton(self.tr("&Start"))
         self.stopButton = QPushButton(self.tr("&Stop"))
         self.neuGButton = QPushButton(self.tr("&Neuer Griff"))
+        self.textEdit = QTextEdit(TESTV)
         self.viewer = QLabel()
         self.viewer.setFixedSize(300, 300)
         self.connect(self.thread, SIGNAL("finished()"), self.updateUi)
@@ -38,9 +41,11 @@ class Window(QWidget):
         layout.addWidget(self.stopButton, 3, 4)
         layout.addWidget(self.neuGButton, 0, 1)
         layout.addWidget(self.viewer, 1, 0, 1, 3)
+        layout.addWidget(self.textEdit, 5, 6)
         self.setLayout(layout)
 
         self.setWindowTitle(self.tr("Tabulation Aufnahme"))
+        self.connect(self.thread, SIGNAL("newKey(float, float, QString)"), SLOT('textAktualisieren(float, float, QString)'))
 
     def startRecording(self):
         self.startButton.setEnabled(False)
@@ -64,6 +69,12 @@ class Window(QWidget):
         global exiting
         exiting = True
         #print(exiting)
+    #@pyqtSlot()
+    
+    @pyqtSignature('textAktualisieren(float, float, QString)')
+    def textAktualisieren(self, keynote, tonfreq, tonname):
+        self.textEdit.append(tonname)
+        print ("hallo", tonname)
 
 class Worker(QThread):
 
@@ -127,6 +138,7 @@ class Worker(QThread):
                             mi = i
                             KEYNOTE = mi * RATE / CHUNK
                 print (KEYNOTE)
+                
                 #Fenster das die aktuell gespielten Frequenzen darstellt
                 neugriffarray.append(KEYNOTE)
         neugriff = sum(neugriffarray)/len(neugriffarray)
@@ -152,6 +164,7 @@ class Worker(QThread):
         FORMAT = pyaudio.paInt16
         CHANNELS = 2
         RATE = 44100
+        TEST = 4
         #RECORD_SECONDS = 10
         #WAVE_OUTPUT_FILENAME = "aufnahme.wav"
         #channel = self.get_current_first_channel()
@@ -236,6 +249,8 @@ class Worker(QThread):
                     print("Der Grundton ist: ",KEYNOTE,"Der Ton ist: ",hoch[0]," das entspricht den Noten: ",hoch[1])
                 else:
                     print("Der Grundton ist: ",KEYNOTE,"und der Ton ist: ",nied[0]," das entspricht den Noten: ",nied[1])
+                    
+                self.emit(SIGNAL("newKey(float, float, QString)"), KEYNOTE, hoch[0], hoch[1])
 
 
 
